@@ -6,10 +6,11 @@
 DOCUMENTATION = '''
 ---
 module: ambari_cluster_state
-version_added: "1.0"
+version_added: "2.0"
 author: Mark Bittmann (https://github.com/mbittmann)
 short_description: Create, delete, start or stop an ambari cluster
-  - Create, delete, start or stop an ambari cluster
+description:  
+    - Create, delete, start or stop an ambari cluster
 options:
   host:
     description:
