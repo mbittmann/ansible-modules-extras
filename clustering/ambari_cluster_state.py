@@ -201,11 +201,11 @@ def main():
                              created_blueprint=created_blueprint, status=request_status)
 
 
-    except requests.ConnectionError as e:
+    except requests.ConnectionError, e:
         module.fail_json(msg="Could not connect to Ambari client: " + str(e.message))
-    except AssertionError as e:
+    except AssertionError, e:
         module.fail_json(msg=e.message)
-    except Exception as e:
+    except Exception, e:
         module.fail_json(msg="Ambari client exception occurred: " + str(e.message))
 
 
@@ -213,7 +213,7 @@ def get_clusters(ambari_url, user, password):
     r = get(ambari_url, user, password, '/api/v1/clusters')
     try:
         assert r.status_code == 200
-    except AssertionError as e:
+    except AssertionError, e:
         e.message = 'Coud not get cluster list: request code {0}, \
                     request message {1}'.format(r.status_code, r.content)
         raise
@@ -237,7 +237,7 @@ def set_cluster_state(ambari_url, user, password, cluster_name, cluster_state):
     r = put(ambari_url, user, password, path, payload)
     try:
         assert r.status_code == 202 or r.status_code == 200
-    except AssertionError as e:
+    except AssertionError, e:
         e.message = 'Coud not set cluster state: request code {0}, \
                     request message {1}'.format(r.status_code, r.content)
         raise
@@ -250,7 +250,7 @@ def create_cluster(ambari_url, user, password, cluster_name, blueprint_name, hos
     r = post(ambari_url, user, password, path, data)
     try:
         assert r.status_code == 202
-    except AssertionError as e:
+    except AssertionError, e:
         e.message = 'Coud not create cluster: request code {0}, \
                     request message {1}'.format(r.status_code, r.content)
         raise
@@ -262,7 +262,7 @@ def get_request_status(ambari_url, user, password, cluster_name, request_id):
     r = get(ambari_url, user, password, path)
     try:
         assert r.status_code == 200
-    except AssertionError as e:
+    except AssertionError, e:
         e.message = 'Coud not get cluster request status: request code {0}, \
                     request message {1}'.format(r.status_code, r.content)
         raise
@@ -296,7 +296,7 @@ def get_blueprints(ambari_url, user, password):
     r = get(ambari_url, user, password, path)
     try:
         assert r.status_code == 200
-    except AssertionError as e:
+    except AssertionError, e:
         e.message = 'Coud not get blueprint list: request code {0}, \
                     request message {1}'.format(r.status_code, r.content)
         raise
@@ -310,7 +310,7 @@ def create_blueprint(ambari_url, user, password, blueprint_name, blueprint_data)
     r = post(ambari_url, user, password, path, data)
     try:
         assert r.status_code == 201
-    except AssertionError as e:
+    except AssertionError, e:
         e.message = 'Coud not create blueprint: request code {0}, \
                     request message {1}'.format(r.status_code, r.content)
         raise
@@ -330,7 +330,7 @@ def delete_cluster(ambari_url, user, password, cluster_name):
     r = delete(ambari_url, user, password, path)
     try:
         assert r.status_code == 200
-    except AssertionError as e:
+    except AssertionError, e:
         e.message = 'Coud not delete cluster: request code {0}, \
                     request message {1}'.format(r.status_code, r.content)
         raise
