@@ -9,7 +9,7 @@ module: ambari_cluster_state
 version_added: "2.0"
 author: Mark Bittmann (https://github.com/mbittmann)
 short_description: Create, delete, start or stop an ambari cluster
-description:  
+description:
     - Create, delete, start or stop an ambari cluster
 options:
   host:
@@ -46,7 +46,7 @@ options:
     description:
       Whether to wait for the request to complete before returning. Default is False.
     required: no
-  requirements: [ 'yaml', 'requests']
+  requirements: [ 'requests']
 '''
 
 EXAMPLES = '''
@@ -92,7 +92,6 @@ EXAMPLES = '''
 __author__ = 'mbittmann'
 from ansible.module_utils.basic import *
 import json
-import os
 try:
     import requests
 except ImportError:
@@ -100,12 +99,6 @@ except ImportError:
 else:
     REQUESTS_FOUND = True
 
-try:
-    import yaml
-except ImportError:
-    YAML_FOUND = False
-else:
-    YAML_FOUND = True
 
 def main():
 
@@ -121,7 +114,7 @@ def main():
         blueprint_name=dict(type='str', default=None, required=False),
         wait_for_complete=dict(default=False, required=False, choices=BOOLEANS),
     )
-    
+
     module = AnsibleModule(
         argument_spec=argument_spec
     )
@@ -129,10 +122,6 @@ def main():
     if not REQUESTS_FOUND:
         module.fail_json(
             msg='requests library is required for this module')
-
-    if not YAML_FOUND:
-        module.fail_json(
-            msg='pyYaml library is required for this module')
 
     p = module.params
 
@@ -201,7 +190,6 @@ def main():
             module.exit_json(changed=True, results=request.content,
                              created_blueprint=created_blueprint, status=request_status)
 
-
     except requests.ConnectionError, e:
         module.fail_json(msg="Could not connect to Ambari client: " + str(e.message))
     except Exception, e:
@@ -213,7 +201,7 @@ def get_clusters(ambari_url, user, password):
     if r.status_code != 200:
         msg = 'Coud not get cluster list: request code {0}, \
                     request message {1}'.format(r.status_code, r.content)
-        raise Exception(msg)       
+        raise Exception(msg)
     clusters = json.loads(r.content)
     return clusters['items']
 
@@ -229,10 +217,10 @@ def set_cluster_state(ambari_url, user, password, cluster_name, cluster_state):
                "Body": {"ServiceInfo": {"state": "{0}".format(cluster_state)}}}
     payload = json.dumps(request)
     r = put(ambari_url, user, password, path, payload)
-    if r.status_code not in [202,200]
+    if r.status_code not in [202, 200]:
         msg = 'Coud not set cluster state: request code {0}, \
                     request message {1}'.format(r.status_code, r.content)
-        raise Exception(msg)       
+        raise Exception(msg)
     return r
 
 
@@ -243,7 +231,7 @@ def create_cluster(ambari_url, user, password, cluster_name, blueprint_name, hos
     if r.status_code != 202:
         msg = 'Coud not create cluster: request code {0}, \
                     request message {1}'.format(r.status_code, r.content)
-        raise Exception(msg)        
+        raise Exception(msg)
     return r
 
 
@@ -253,7 +241,7 @@ def get_request_status(ambari_url, user, password, cluster_name, request_id):
     if r.status_code != 200:
         msg = 'Coud not get cluster request status: request code {0}, \
                     request message {1}'.format(r.status_code, r.content)
-        raise Exception(msg)        
+        raise Exception(msg)
     service = json.loads(r.content)
     return service['Requests']['request_status']
 
@@ -283,7 +271,7 @@ def get_blueprints(ambari_url, user, password):
         msg = 'Coud not get blueprint list: request code {0}, \
                     request message {1}'.format(r.status_code, r.content)
         raise Exception(msg)
-                
+
     services = json.loads(r.content)
     return services['items']
 
@@ -292,7 +280,7 @@ def create_blueprint(ambari_url, user, password, blueprint_name, blueprint_data)
     data = json.dumps(blueprint_data)
     path = "/api/v1/blueprints/" + blueprint_name
     r = post(ambari_url, user, password, path, data)
-    if r.status_code != 200:
+    if r.status_code != 201:
         msg = 'Coud not create blueprint: request code {0}, \
                     request message {1}'.format(r.status_code, r.content)
         raise Exception(msg)
@@ -301,7 +289,7 @@ def create_blueprint(ambari_url, user, password, blueprint_name, blueprint_data)
 
 def blueprint_exists(ambari_url, user, password, blueprint_name):
     blueprints = get_blueprints(ambari_url, user, password)
-    return blueprint_name in [item['Blueprints']['blueprint_name'] for item in blueprints]:
+    return blueprint_name in [item['Blueprints']['blueprint_name'] for item in blueprints]
 
 
 def delete_cluster(ambari_url, user, password, cluster_name):
