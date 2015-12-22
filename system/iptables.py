@@ -54,12 +54,14 @@ options:
     default: filter
     choices: [ "filter", "nat", "mangle", "raw", "security" ]
   state:
-    description: Whether the rule should be absent or present.
+    description: 
+      - Whether the rule should be absent or present.
     required: false
     default: present
     choices: [ "present", "absent" ]
   ip_version:
-    description: Which version of the IP protocol this rule should apply to.
+    description: 
+      - Which version of the IP protocol this rule should apply to.
     required: false
     default: ipv4
     choices: [ "ipv4", "ipv6" ]
@@ -246,7 +248,7 @@ def append_comm(rule, param):
 def append_conntrack(rule, param):
     if param:
         rule.extend(['-m'])
-        rule.extend(['conntrack'])
+        rule.extend(['state'])
 
 def append_limit(rule, param):
     if param:
@@ -273,7 +275,7 @@ def construct_rule(params):
     append_param(rule, params['comment'], '--comment', False)
     if params['ctstate']:
         append_conntrack(rule, params['ctstate'])
-        append_param(rule, ','.join(params['ctstate']), '--ctstate', False)
+        append_param(rule, ','.join(params['ctstate']), '--state', False)
     append_limit(rule, params['limit'])
     append_param(rule, params['limit'], '--limit', False)
     return rule
