@@ -220,7 +220,7 @@ def get_clusters(ambari_url, user, password):
 
 def cluster_exists(ambari_url, user, password, cluster_name):
     clusters = get_clusters(ambari_url, user, password)
-    return cluster_name in [item['Clusters']['cluster_name'] for item in clusters]:
+    return cluster_name in [item['Clusters']['cluster_name'] for item in clusters]
 
 
 def set_cluster_state(ambari_url, user, password, cluster_name, cluster_state):
