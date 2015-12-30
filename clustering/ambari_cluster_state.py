@@ -115,8 +115,11 @@ def main():
         wait_for_complete=dict(default=False, required=False, choices=BOOLEANS),
     )
 
+    required_together = ['blueprint_var', 'blueprint_name']
+
     module = AnsibleModule(
-        argument_spec=argument_spec
+        argument_spec=argument_spec,
+        required_together=required_together
     )
 
     if not REQUESTS_FOUND:
